@@ -1,8 +1,15 @@
+import os  # THÊM DÒNG NÀY VÀO ĐẦU FILE
 import streamlit as st
 import google.generativeai as genai
 
-# Cấu hình API Key
+# Sau đó mới lấy API_KEY
 API_KEY = os.getenv("API_KEY")
+
+if not API_KEY:
+    st.error("Không tìm thấy API_KEY trong Secrets!")
+    st.stop()
+
+genai.configure(api_key=API_KEY)
 
 # ================== TỐI ƯU HÓA TỐC ĐỘ (CORE) ==================
 
