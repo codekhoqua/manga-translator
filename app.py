@@ -1,71 +1,107 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- CẤU HÌNH HỆ THỐNG ---
-API_KEY = "AIzaSyAxoQQELM325tS9voZedDw72fZoyjMc0aA"
+# Cấu hình API Key
+API_KEY = "AIzaSyAH7wc1mZCN8MI0U7OzBy0oEwWrxa7kho0"
 genai.configure(api_key=API_KEY)
 
+# ================== TỐI ƯU HÓA TỐC ĐỘ (CORE) ==================
 
-MODEL_NAME = "gemini-2.5-flash" 
+MODEL_NAME = "gemini-3.1-flash-lite-preview" 
 
 generation_config = {
-    "temperature": 0, # Để 0 để AI không cần "suy nghĩ" nhiều, dịch thẳng luôn
+    "temperature": 0.0,
     "max_output_tokens": 1000,
+    "top_p": 1,
+    "top_k": 1,
 }
 
-# Instruction tối giản để tăng tốc
+# THAY ĐỔI QUAN TRỌNG: Câu lệnh cực ngắn và nghiêm ngặt
 sys_msg = (
-    "Bạn là thợ dịch Manga/IT. Dịch Việt -> Nhật lịch sự văn phòng. "
-    "Dùng: 写植, レタッチ, 描き込み, 非表示, フォルダ, レイヤー. Dịch thẳng, không giải thích."
+    "Bạn là máy dịch Việt-Nhật. NHIỆM VỤ DUY NHẤT: Dịch văn bản đầu vào. "
+    "KHÔNG giải thích, KHÔNG thêm '作業指示', KHÔNG liệt kê từ vựng. "
+    "Ưu tiên dùng: 写植, レタッチ, 描き込み, 非表示, フォルダ, レイヤー."
 )
 
 model = genai.GenerativeModel(
     model_name=MODEL_NAME,
     system_instruction=sys_msg,
-    generation_config=generation_config
+    generation_config=generation_config,
 )
 
-# --- GIAO DIỆN WEB ---
-st.set_page_config(page_title="Manga Translator Pro", page_icon="🎨")
+# ================== GIAO DIỆN & FIX CSS ==================
+st.set_page_config(page_title="Manga Translator Pro", page_icon="🎨", layout="centered")
+
+st.markdown("""
+    <style>
+    footer {visibility: hidden;}
+    .stTextArea textarea { font-size: 16px !important; }
+    
+    .result-box {
+        background-color: #1e1e1e;
+        color: #ffffff;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 100px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 st.title("🎨 Manga Translator Pro")
-st.caption("Nhấn Ctrl + Enter để dịch ngay lập tức")
 
-# Sử dụng FORM để bắt sự kiện Ctrl + Enter
+if "input_text" not in st.session_state:
+    st.session_state.input_text = ""
+
 with st.form(key='translation_form', clear_on_submit=False):
-    source_text = st.text_area("Nhập tiếng Việt:", height=150)
+    source_text = st.text_area(
+        "Nhập nội dung cần dịch:", 
+        value=st.session_state.input_text,
+        height=150,
+        placeholder="Ctrl + Enter để dịch ngay...",
+        key="main_input"
+    )
     
     col1, col2 = st.columns([3, 1])
     with col1:
-        mode = st.selectbox("Ngữ cảnh:", ["Văn phòng/Kỹ thuật", "Kính ngữ (Sếp)", "Thân mật"])
+        mode = st.selectbox("Ngữ cảnh:", ["Văn phòng", "Kính ngữ", "Thân mật"])
     with col2:
-        st.write("")
-        st.write("")
-        # Nút submit trong form
-        submit_button = st.form_submit_button("Dịch ngay (Ctrl+Enter)", use_container_width=True)
+        submit_button = st.form_submit_button("🚀 Dịch ngay", use_container_width=True, type="primary")
 
-# Xử lý sau khi nhấn nút hoặc nhấn Ctrl + Enter
+# ================== XỬ LÝ DỊCH ==================
 if submit_button:
     if source_text.strip():
-        st.subheader("Kết quả tiếng Nhật:")
-        result_placeholder = st.empty()
+        st.session_state.input_text = source_text
+        st.subheader("🇯🇵 Kết quả:")
+        
+        result_placeholder = st.empty() 
         full_response = ""
-
-        # Hiện vòng tròn process (Spinner)
-        with st.spinner('Đang kết nối API và dịch...'):
+        
+        with st.spinner("Đang xử lý..."):
             try:
-                response = model.generate_content(f"Context: {mode}. Dịch: {source_text}", stream=True)
+                # Thêm chỉ thị trực tiếp vào prompt để ép model tuân thủ
+                prompt = f"Dịch nội dung sau sang tiếng Nhật (ngữ cảnh {mode}), chỉ trả về bản dịch: {source_text}"
+                response = model.generate_content(prompt, stream=True)
                 
                 for chunk in response:
                     if chunk.text:
                         full_response += chunk.text
-                        # Cập nhật kết quả chạy ra từ từ
-                        result_placeholder.code(full_response, language="text")
+                        result_placeholder.markdown(
+                            f'<div class="result-box">{full_response}</div>', 
+                            unsafe_allow_html=True
+                        )
                 
-                st.toast('Đã dịch xong!', icon='✅')
+                st.toast("Hoàn thành!", icon="✅")
+                
             except Exception as e:
                 st.error(f"Lỗi: {str(e)}")
     else:
-        st.warning("Vui lòng nhập văn bản trước khi dịch.")
+        st.warning("Vui lòng nhập nội dung.")
 
 st.divider()
+st.info("💡 **Copyright** LinkStoryAsia")
