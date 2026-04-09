@@ -2,8 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # Cấu hình API Key
-API_KEY = "AIzaSyAH7wc1mZCN8MI0U7OzBy0oEwWrxa7kho0"
-genai.configure(api_key=API_KEY)
+API_KEY = os.getenv("API_KEY")
 
 # ================== TỐI ƯU HÓA TỐC ĐỘ (CORE) ==================
 
