@@ -29,7 +29,7 @@ UI_TEXT = {
         "label_input": "Văn bản nguồn:",
         "result_title": "Bản dịch tiếng Nhật:",
         "warning": "Vui lòng nhập nội dung cần dịch.",
-        "footer": "💡 Copyright LinkStoryAsia | Dịch thuật nội bộ Design Team Ver 2.0",
+        "footer": "💡 Copyright LinkStoryAsia | Dịch thuật nội bộ Design Team Ver 2.1",
         "lang_left": "Tiếng Việt",
         "lang_right": "Tiếng Nhật"
     },
@@ -42,7 +42,7 @@ UI_TEXT = {
         "label_input": "原文:",
         "result_title": "ベトナム語訳:",
         "warning": "内容を入力してください。",
-        "footer": "💡 LinkStoryAsia | デザインチーム翻訳ツール Ver 2.0",
+        "footer": "💡 LinkStoryAsia | デザインチーム翻訳ツール Ver 2.1",
         "lang_left": "日本語",
         "lang_right": "ベトナム語"
     }
