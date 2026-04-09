@@ -113,4 +113,4 @@ if submit_button:
         st.warning("Vui lòng nhập nội dung.")
 
 st.divider()
-st.caption("💡 **Copyright** LinkStoryAsia | Dịch thuật nội bộ Design Team")
+st.caption("💡 **Copyright** LinkStoryAsia | Dịch thuật nội bộ Design Team Ver 2.0")
