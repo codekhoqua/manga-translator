@@ -11,8 +11,6 @@ if not API_KEY:
 
 genai.configure(api_key=API_KEY)
 
-# ================== TỐI ƯU HÓA TỐC ĐỘ (CORE) ==================
-
 MODEL_NAME = "gemini-3.1-flash-lite-preview" 
 generation_config = {
     "temperature": 0.0,
@@ -29,7 +27,7 @@ UI_TEXT = {
         "label_input": "Văn bản nguồn:",
         "result_title": "Bản dịch tiếng Nhật:",
         "warning": "Vui lòng nhập nội dung cần dịch.",
-        "footer": "💡 Copyright LinkStoryAsia | Dịch thuật nội bộ Design Team Ver 2.1",
+        "footer": "💡 Copyright LinkStoryAsia | Dịch thuật nội bộ Design Team Ver 2.0",
         "lang_left": "Tiếng Việt",
         "lang_right": "Tiếng Nhật"
     },
@@ -42,7 +40,7 @@ UI_TEXT = {
         "label_input": "原文:",
         "result_title": "ベトナム語訳:",
         "warning": "内容を入力してください。",
-        "footer": "💡 LinkStoryAsia | デザインチーム翻訳ツール Ver 2.1",
+        "footer": "💡 LinkStoryAsia | デザインチーム翻訳ツール Ver 2.0",
         "lang_left": "日本語",
         "lang_right": "ベトナム語"
     }
@@ -61,6 +59,14 @@ if st.session_state.is_jp_to_vi:
         "Bạn là máy dịch Nhật-Việt chuyên về mảng Design/Manga/Webtoon. "
         "NHIỆM VỤ DUY NHẤT: Dịch văn bản đầu vào sang tiếng Việt tự nhiên, chuyên nghiệp. "
         "KHÔNG giải thích, KHÔNG thêm text thừa."
+        "Nếu có gặp từ có từ khóa là Inpainting thì hãy dịch là 削除補完 hoặc là giữ nguyên"
+        "Nếu bạn dùng những từ liên quan đến ứng dụng Photoshop thì sử dụng thuật ngữ chuyên môn"
+        "- Retouch: レタッチ | Vẽ bù/Vẽ thêm: 加筆する "
+        "- Lettering: 写植 (Shashoku) | Làm sạch (Cleaning): ゴミ取り (Gomitori) "
+        "- Layer ẩn: 非表示レイヤー | Folder/Group: フォルダ / グループ "
+        "- Inpainting: インペイント (Luôn hiểu là một Folder/Layer Set trong Photoshop) "
+        "- Script: スクリプト "
+        "YÊU CẦU: Dịch tự nhiên theo văn phong kỹ thuật Nhật Bản. KHÔNG giải thích, KHÔNG thêm '作業指示' hay liệt kê từ vựng."
     )
 else:
     sys_msg = (
